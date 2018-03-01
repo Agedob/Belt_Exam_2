@@ -1,39 +1,37 @@
 from __future__ import unicode_literals
 from django.db import models
-import re, bcrypt
+import bcrypt
 
 class BlogManager(models.Manager):
-    def simple_validator(self, postData):
+    def regi_validator(self, postData):
         errors = {}
-        re_email = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
-        if len(postData['fname']) < 2:
-            errors["fname"] = "First name shouldn't be empty."
-        if len(postData['lname']) < 2:
-            errors["lname"] = "Last name shouldn't be empty."
-        if not re_email.match(postData['email']):
-            errors["email"] = "Email should be standard email characters."
+        if len(postData['name']) < 2:
+            errors["name"] = "Name shouldn't be empty."
+        if len(postData['username']) < 2:
+            errors["username"] = "Userame shouldn't be empty."
         if len(postData['pw']) < 8:
             errors['pw'] = "Passwords must be longer."
         elif postData['pw'] != postData['cpw']:
             errors['match'] = "Your password didn't match up."
-        if User.objects.filter(email = postData['email']):
-            errors['email'] = "Invalid email."
+        if User.objects.filter(username = postData['username']):
+            errors['exsists'] = "Invalid Username."
         if not errors:
             pass1 = bcrypt.hashpw(postData['pw'].encode(), bcrypt.gensalt())
-            User.objects.create(first_name=postData['fname'], last_name=postData['lname'], email=postData['email'],password=pass1)
+            User.objects.create(name=postData['name'], username=postData['username'], password=pass1)
         return errors
 
     def login_validator(self, POSTS):
         errors = {}
-        if len(POSTS['email']) < 1 or len(POSTS['pw']) < 1:
+        if len(POSTS['username']) < 1 or len(POSTS['pw']) < 1:
             errors['empty'] = "Fill out Login"
-        if not User.objects.filter(email = POSTS['email']):
-            errors['email'] = "Wrong email/password"
+        if not User.objects.filter(username = POSTS['username']):
+            errors['username'] = "Wrong Username/Password"
         else:
-            passs = User.objects.get(email=POSTS['email'])
+            passs = User.objects.get(username=POSTS['username'])
             if not bcrypt.checkpw(POSTS['pw'].encode(), passs.password.encode()):
-                errors['passs'] = "Wrong email/password"
+                errors['passs'] = "Wrong Username/password"
         return errors
+# done with log commit
 
     def book_validator(self, POSTS, use_id):
         errors = {}
@@ -68,3 +66,21 @@ class BlogManager(models.Manager):
             Review.objects.create(rating = POSTS['stars'], comments = POSTS['review'], books_id = POSTS['bookid'], users_id = use_id)
         return errors
 
+class User(models.Model):
+    name = models.CharField(max_length=255)
+    username = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+    objects = BlogManager() 
+
+class Trip(models.Model):
+    destination = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
+    travel_from = models.CharField(max_length=255)
+    travel_to = models.CharField(max_length=255)
+    user = models.ForeignKey(User, related_name="user_trip")
+    users = models.ManyToManyField(User, related_name="user_trips")
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+    objects = BlogManager() 

@@ -4,5 +4,46 @@ from django.shortcuts import render, HttpResponse, redirect
 from .models import *
 
 def index(request):
-    return render(request,'belts/index.html')
-    #  {'everyone':User.objects.all()}
+    return render(request,'belts/index.html', {'everyone':User.objects.all()})
+
+def dashboard(request):
+    return render(request,'belts/travel.html')
+
+def dest(request):
+    return render(request,'belts/destination.html')
+
+def add_trip(request):
+    return render(request,'belts/add_trip.html')
+
+def logout(request):
+    request.session.clear()
+    return redirect('/')
+
+def register(request):
+    if request.method != 'POST':
+        messages.error(request, "Create User")
+        return redirect('/')
+    else:
+        errors = User.objects.regi_validator(request.POST)
+        if len(errors):
+            for key,values in errors.iteritems():
+                messages.success(request, values)
+            return redirect('/')
+        else:
+            id = User.objects.get(username=request.POST['username']).id
+            request.session['id'] = id
+            request.session['name'] = request.POST['name']
+            return redirect('/travels')
+
+def login(request):
+    errors = User.objects.login_validator(request.POST)
+    if len(errors):
+        for key,values in errors.iteritems():
+            messages.success(request, values)
+        return redirect('/')
+    else:
+        id = User.objects.get(username=request.POST['username']).id
+        name = User.objects.get(username=request.POST['username']).name
+        request.session['id'] = id
+        request.session['name'] = name
+        return redirect('/travels')
