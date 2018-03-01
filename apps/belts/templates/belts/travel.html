@@ -9,13 +9,13 @@
 <body>
     <div class="nav_bar"><a href="/logout">Logout</a></div>
     <h1>Hello, {{request.session.name}}</h1>
-    <p>Your Wish List:
+    <p>Your Trip Schedules
             <table style="width:80%; margin:20px; text-align:center;">
                     <tr>
-                        <th>Item</th>
-                        <th>Added By</th>
-                        <th>Date Added</th>
-                        <th>Action</th>
+                        <th>Destination</th>
+                        <th>Travel Start Date</th>
+                        <th>Travel End Date</th>
+                        <th>Description</th>
                     </tr>
                     {% for stuff in user_list.Users_item.all %}
                     <tr>
@@ -27,7 +27,7 @@
                     {% endfor %}
             </table>
     </p>    
-    <p>Other Users' Wish List:
+    <p>Other User's Travel Plans:
             <table style="width:80%; margin:20px; text-align:center;">
                     <tr>
                         <th>Item</th>
@@ -43,6 +43,6 @@
                     </tr>
             </table>
     </p>
-    <a href="/wish_items/create">Add Item</a>
+    <a href="/add_trip">Create a new Travel Plan</a>
 </body>
 </html>

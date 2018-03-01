@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 import bcrypt
+from time import gmtime, strftime
 
 class BlogManager(models.Manager):
     def regi_validator(self, postData):
@@ -33,31 +34,20 @@ class BlogManager(models.Manager):
         return errors
 # done with log commit
 
-    def book_validator(self, POSTS, use_id):
+    def trip_validator(self, POSTS, use_id):
         errors = {}
-        if len(POSTS['title']) < 3 or len(POSTS['review']) < 3:
+        a = strftime("%Y-%m-%d", gmtime())
+        print POSTS['from']
+        if len(POSTS['dest']) < 3 or len(POSTS['desc']) < 3:
             errors['empty'] = "Fill out form"
-        if int(POSTS['stars']) == 0:
-            errors['rate'] = "Select a rating"
-        if len(POSTS['new_auth']) > 3 and Author.objects.filter(author = POSTS['new_auth']):
-                errors['auth'] = "Author is in our list"
-        if Book.objects.filter(title = POSTS['title']):
-            errors["exsists"] = "Title already exsists" 
+        if POSTS['to'] < POSTS['from']:
+            errors['back to'] = "STILL NOT DOC"
+        if POSTS['from'] < a:
+            errors['future'] = "Your not doc"
         if not errors:
-            if len(POSTS['new_auth']) > 3:
-                aid = Author.objects.create(author = POSTS['new_auth'])
-                print aid
-                id = Book.objects.create(title = POSTS['title'], authors_id = aid.id)
-                print id
-                Review.objects.create(rating = POSTS['stars'], comments = POSTS['review'], books_id = id.id, users_id = use_id)
-            else:
-                aid = Author.objects.get(author = POSTS['author'])
-                print aid
-                id = Book.objects.create(title = POSTS['title'], authors_id = aid.id)
-                print id
-                Review.objects.create(rating = POSTS['stars'], comments = POSTS['review'], books_id = id.id, users_id = use_id)
+            Trip.objects.create(destination=POSTS['dest'],description=POSTS['desc'],travel_from=POSTS['from'],travel_to=POSTS['to'],user_id=use_id)
         return errors
-
+# trip val done commit 
     def review_validator(self, POSTS, use_id):
         errors = {}
         if len(POSTS['review']) < 5 or int(POSTS['stars']) == 0:

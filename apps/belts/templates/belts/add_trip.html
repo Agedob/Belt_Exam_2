@@ -10,11 +10,18 @@
     <div class="nav_bar"><a href="/travels">Home</a> <a href="/logout">Logout</a></div>
     <div>
         <h1>Add a Trip</h1>
-        <form>
-            <p>Destination:<input type="text"></p>
-            <p>Desription:<input type="text"></p>
-            <p>Travel Date From:<input type="date"></p>
-            <p>Travel Date To:<input type="date"></p>
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color:red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        <form action="/adding_trip" method="post">
+            {% csrf_token %}
+            <p>Destination:<input type="text" name="dest"></p>
+            <p>Description:<input type="text" name="desc"></p>
+            <p>Travel Date From:<input type="date" name="from"></p>
+            <p>Travel Date To:<input type="date" name="to"></p>
+            <input type="submit">
         </form>
     </div>
 </body>
