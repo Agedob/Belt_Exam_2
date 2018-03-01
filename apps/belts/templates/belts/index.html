@@ -21,11 +21,10 @@
     <div class="reg"  style="width:45%; display:inline-block;">
         <form action="/regi" method="post">
             {% csrf_token %}
-        <label for="name">Name:<input type="text" name="name"></label>
-        <label for="username">Username:<input type="text" name="username"></label>
-        <label for="pw">Password:<input type="password" name="pw"></label>
-        <label for="cpw">Confirm pw:<input type="password" name="cpw"></label>
-        <br>
+        <p>Name:<input type="text" name="name"></p>
+        <p>Username:<input type="text" name="username"></p>
+        <p>Password:<input type="password" name="pw"></p>
+        <p>Confirm pw:<input type="password" name="cpw"></p>
         <input type="submit" value="Register">
         </form>
     </div>

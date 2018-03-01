@@ -10,13 +10,19 @@ def dashboard(request):
     if not "id" in request.session:
         messages.error(request, "Login")
         return redirect('/')
-    return render(request,'belts/travel.html')
+    else:
+        me = User.objects.get(id = request.session['id'])
+        content = {'mytrips': me.user_trip.all(),'sometrips':me.user_trips.all(),'alltrips':Trip.objects.exclude(user_id=request.session['id'])}
+    return render(request,'belts/travel.html',content)
 
-def dest(request):
+def dest(request,num):
     if not "id" in request.session:
         messages.error(request, "Login")
         return redirect('/')
-    return render(request,'belts/destination.html')
+    else:
+        x = Trip.objects.get(id = num)
+        content = {"user":x.user,"trip":x,"joining":x.users.all()}
+    return render(request,'belts/destination.html', content)
 
 def add_trip(request):
     if not "id" in request.session:
@@ -46,16 +52,20 @@ def register(request):
             return redirect('/travels')
 
 def login(request):
-    errors = User.objects.login_validator(request.POST)
-    if len(errors):
-        for key,values in errors.iteritems():
-            messages.success(request, values)
+    if request.method != 'POST':
+        messages.error(request, "Create User")
         return redirect('/')
     else:
-        id = User.objects.get(username=request.POST['username']).id
-        name = User.objects.get(username=request.POST['username']).name
-        request.session['id'] = id
-        request.session['name'] = name
+        errors = User.objects.login_validator(request.POST)
+        if len(errors):
+            for key,values in errors.iteritems():
+                messages.success(request, values)
+            return redirect('/')
+        else:
+            id = User.objects.get(username=request.POST['username']).id
+            name = User.objects.get(username=request.POST['username']).name
+            request.session['id'] = id
+            request.session['name'] = name
         return redirect('/travels')
 
 def adding_trip(request):
@@ -70,3 +80,14 @@ def adding_trip(request):
             return redirect('/add_trip')
         else:
             return redirect('/travels')
+
+def join_trip(request,num):
+    if not "id" in request.session:
+        messages.error(request, "Login")
+        return redirect('/')
+    else:
+        id = User.objects.get(id = request.session['id'])
+        tid = Trip.objects.get(id=num)
+        tid.users.add(id)
+        print "worked"
+        return redirect('/travels')
