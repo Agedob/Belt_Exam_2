@@ -48,13 +48,7 @@ class BlogManager(models.Manager):
             Trip.objects.create(destination=POSTS['dest'],description=POSTS['desc'],travel_from=POSTS['from'],travel_to=POSTS['to'],user_id=use_id)
         return errors
 # trip val done commit 
-    def review_validator(self, POSTS, use_id):
-        errors = {}
-        if len(POSTS['review']) < 5 or int(POSTS['stars']) == 0:
-            errors['empty'] = "Fill out form"
-        if not errors:
-            Review.objects.create(rating = POSTS['stars'], comments = POSTS['review'], books_id = POSTS['bookid'], users_id = use_id)
-        return errors
+
 
 class User(models.Model):
     name = models.CharField(max_length=255)

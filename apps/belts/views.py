@@ -12,7 +12,9 @@ def dashboard(request):
         return redirect('/')
     else:
         me = User.objects.get(id = request.session['id'])
-        content = {'mytrips': me.user_trip.all(),'sometrips':me.user_trips.all(),'alltrips':Trip.objects.exclude(user_id=request.session['id'])}
+        content = {'mytrips': me.user_trip.all(),
+        'sometrips':me.user_trips.all(),
+        'alltrips':Trip.objects.all().exclude(users=request.session['id']).exclude(user=request.session['id'])}
     return render(request,'belts/travel.html',content)
 
 def dest(request,num):
